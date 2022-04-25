@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Disc_Cup_Fovea_check</folder>
+	<filename>0060.png</filename>
+	<path>D:\GAMMA_training data\training_data\Disc_Cup_Fovea_check\0060.png</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>2992</width>
+		<height>2000</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Fovea</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1318</xmin>
+			<ymin>935</ymin>
+			<xmax>1518</xmax>
+			<ymax>1129</ymax>
+		</bndbox>
+	</object>
+</annotation>
