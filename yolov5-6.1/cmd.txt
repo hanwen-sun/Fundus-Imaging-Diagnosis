@@ -1,0 +1,1 @@
+train.py --img 640 --batch 8 --epochs 3 --data E:\git repositories\Fundus-Imaging-Diagnosis\datasets\data.yaml --weights yolov5m.pt

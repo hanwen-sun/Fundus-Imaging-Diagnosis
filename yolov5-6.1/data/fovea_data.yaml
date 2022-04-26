@@ -1,0 +1,5 @@
+train: E:/git repositories/Fundus-Imaging-Diagnosis/datasets/train/images
+val: E:/git repositories/Fundus-Imaging-Diagnosis/datasets/valid/images
+
+nc: 1
+names: ['Fovea']
