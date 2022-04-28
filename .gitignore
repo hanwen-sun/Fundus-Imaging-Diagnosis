@@ -2,6 +2,9 @@
 datasets_for_efficientnetV2
 datasets_for_yolov5
 datasets_for_U-net
+U-net_for_segmentation/.idea
+U-net_for_segmentation/__pycache__
+U-net_for_segmentation/data
 efficientnetV2_for_classification/runs
 efficientnetV2_for_classification/*.pth
 efficientnetV2_for_classification/weights
