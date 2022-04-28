@@ -133,7 +133,7 @@ if __name__ == '__main__':
 
     # 数据集所在根目录
     parser.add_argument('--data-path', type=str,
-                        default="E:/git repositories/Fundus-Imaging-Diagnosis/Mess_datasets_for_efficientnetV2")
+                        default="E:/git repositories/Fundus-Imaging-Diagnosis/datasets_for_efficientnetV2")
 
     # load model weights
     parser.add_argument('--weights', type=str, default='./best_acc.pth',
