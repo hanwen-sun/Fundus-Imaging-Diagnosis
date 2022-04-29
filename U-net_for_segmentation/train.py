@@ -82,14 +82,14 @@ def main(args):
     num_workers = min([os.cpu_count(), batch_size if batch_size > 1 else 0, 8])
     train_loader = torch.utils.data.DataLoader(train_dataset,
                                                batch_size=batch_size,
-                                               num_workers=num_workers,
+                                               num_workers=0,
                                                shuffle=True,
                                                pin_memory=True,
                                                collate_fn=train_dataset.collate_fn)
 
     val_loader = torch.utils.data.DataLoader(val_dataset,
                                              batch_size=1,
-                                             num_workers=num_workers,
+                                             num_workers=0,
                                              pin_memory=True,
                                              collate_fn=val_dataset.collate_fn)
 
@@ -164,12 +164,12 @@ def parse_args():
     import argparse
     parser = argparse.ArgumentParser(description="pytorch unet training")
 
-    parser.add_argument("--data-path", default="./", help="DRIVE root")
+    parser.add_argument("--data-path", default="E:/git repositories/Fundus-Imaging-Diagnosis/datasets_for_U-net", help="DRIVE root")
     # exclude background
     parser.add_argument("--num-classes", default=1, type=int)
     parser.add_argument("--device", default="cuda", help="training device")
     parser.add_argument("-b", "--batch-size", default=4, type=int)
-    parser.add_argument("--epochs", default=200, type=int, metavar="N",
+    parser.add_argument("--epochs", default=100, type=int, metavar="N",
                         help="number of total epochs to train")
 
     parser.add_argument('--lr', default=0.01, type=float, help='initial learning rate')

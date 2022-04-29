@@ -35,6 +35,7 @@ class RandomResize(object):
         self.max_size = max_size
 
     def __call__(self, image, target):
+
         size = random.randint(self.min_size, self.max_size)
         # 这里size传入的是int类型，所以是将图像的最小边长缩放到size大小
         image = F.resize(image, size)

@@ -5,7 +5,7 @@ import torch
 from torchvision import transforms
 import numpy as np
 from PIL import Image
-
+import cv2
 from src import UNet
 
 
@@ -17,8 +17,8 @@ def time_synchronized():
 def main():
     classes = 1  # exclude background
     weights_path = "./save_weights/best_model.pth"
-    img_path = "./DRIVE/test/images/01_test.tif"
-    roi_mask_path = "./DRIVE/test/mask/01_test_mask.gif"
+    img_path = "E:/git repositories/Fundus-Imaging-Diagnosis/datasets_for_U-net/DRIVE/test/images/01_test.tif"
+    roi_mask_path = "E:/git repositories/Fundus-Imaging-Diagnosis/datasets_for_U-net/DRIVE/test/mask/01_test_mask.gif"
     assert os.path.exists(weights_path), f"weights {weights_path} not found."
     assert os.path.exists(img_path), f"image {img_path} not found."
     assert os.path.exists(roi_mask_path), f"image {roi_mask_path} not found."
@@ -42,7 +42,8 @@ def main():
     roi_img = np.array(roi_img)
 
     # load image
-    original_img = Image.open(img_path).convert('RGB')
+    img = cv2.imread(img_path)
+    original_img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
     # from pil image to tensor and normalize
     data_transform = transforms.Compose([transforms.ToTensor(),

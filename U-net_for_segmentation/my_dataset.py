@@ -1,4 +1,5 @@
 import os
+import cv2
 from PIL import Image
 import numpy as np
 from torch.utils.data import Dataset
@@ -8,13 +9,14 @@ class DriveDataset(Dataset):
     def __init__(self, root: str, train: bool, transforms=None):
         super(DriveDataset, self).__init__()
         self.flag = "training" if train else "test"
-        data_root = os.path.join(root, "DRIVE", self.flag)
+        data_root = os.path.join(root, self.flag)
         assert os.path.exists(data_root), f"path '{data_root}' does not exists."
         self.transforms = transforms
         img_names = [i for i in os.listdir(os.path.join(data_root, "images")) if i.endswith(".tif")]
         self.img_list = [os.path.join(data_root, "images", i) for i in img_names]
         self.manual = [os.path.join(data_root, "1st_manual", i.split("_")[0] + "_manual1.gif")
                        for i in img_names]
+
         # check files
         for i in self.manual:
             if os.path.exists(i) is False:
@@ -28,7 +30,9 @@ class DriveDataset(Dataset):
                 raise FileNotFoundError(f"file {i} does not exists.")
 
     def __getitem__(self, idx):
-        img = Image.open(self.img_list[idx]).convert('RGB')
+        # 这里直接用PIL读会卡住
+        img = cv2.imread(self.img_list[idx])
+        img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         manual = Image.open(self.manual[idx]).convert('L')
         manual = np.array(manual) / 255
         roi_mask = Image.open(self.roi_mask[idx]).convert('L')
@@ -40,7 +44,7 @@ class DriveDataset(Dataset):
 
         if self.transforms is not None:
             img, mask = self.transforms(img, mask)
-
+        print(img.mode)
         return img, mask
 
     def __len__(self):
