@@ -6,6 +6,7 @@ U-net_for_segmentation/.idea
 U-net_for_segmentation/__pycache__
 U-net_for_segmentation/save_weights
 efficientnetV2_for_classification/runs
+efficientnetV2_for_classification/estimate_info
 efficientnetV2_for_classification/*.pth
 efficientnetV2_for_classification/weights
 efficientnetV2_for_classification/.idea

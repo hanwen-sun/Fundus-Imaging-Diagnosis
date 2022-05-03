@@ -3,12 +3,12 @@ import sys
 import json
 import pickle
 import random
-
+import datetime
+import numpy
 import torch
 from tqdm import tqdm
 
 import matplotlib.pyplot as plt
-
 
 def read_split_data(root: str, val_rate: float = 0.2):
     random.seed(0)  # 保证随机结果可复现
@@ -74,7 +74,6 @@ def read_split_data(root: str, val_rate: float = 0.2):
 
     return train_images_path, train_images_label, val_images_path, val_images_label
 
-
 def plot_data_loader_image(data_loader):
     batch_size = data_loader.batch_size
     plot_num = min(batch_size, 4)
@@ -99,20 +98,68 @@ def plot_data_loader_image(data_loader):
             plt.imshow(img.astype('uint8'))
         plt.show()
 
-
 def write_pickle(list_info: list, file_name: str):
     with open(file_name, 'wb') as f:
         pickle.dump(list_info, f)
-
 
 def read_pickle(file_name: str) -> list:
     with open(file_name, 'rb') as f:
         info_list = pickle.load(f)
         return info_list
 
+class Estimate():
+    def __init__(self, num_classes:int, is_train=True):
+        self.predict_list = []
+        self.label_list = []
+        self.name_list = []
+        self.err_name_list = []
+        self.num_in_classes = torch.zeros(num_classes)
+        self.pre_in_classes = torch.zeros(num_classes)
+        self.true_labels = torch.zeros(num_classes)
+        self.precision = torch.zeros(num_classes)
+        self.recall = torch.zeros(num_classes)
 
-def train_one_epoch(model, optimizer, data_loader, device, epoch):
+    def add(self, pred_classes, labels, names):
+        self.predict_list.extend(pred_classes)
+        self.label_list.extend(labels)
+        self.name_list.extend(names)
+
+    def cal(self):
+        for x, y, n in zip(self.predict_list, self.label_list, self.name_list):
+            self.pre_in_classes[x] += 1
+            self.num_in_classes[y] += 1
+            if x != y:
+                self.err_name_list.append((n, y, x)) # [图片名, 原始标签, 错判标签]
+            else:
+                self.true_labels[x] += 1
+
+        self.precision = torch.div(self.true_labels, self.pre_in_classes)
+        self.recall = torch.div(self.true_labels, self.num_in_classes)
+
+        return self.precision, self.recall, self.err_name_list
+
+    def save(self, epoch, path, is_train=True):
+        p = self.precision.cpu().numpy().tolist()
+        r = self.recall.cpu().numpy().tolist()
+        state = "train" if is_train else "valid"
+        with open(path, "a") as f:
+            info = f"[epoch({state}): {epoch} ]\n" \
+                   f"precision: {p[0]:.6f}, {p[1]:.6f}, {p[2]:.6f}, {p[3]:.6f}\n" \
+                   f"recall: {r[0]:.6f}, {r[1]:.6f}, {r[2]:.6f}, {r[3]:.6f}\n" \
+                   f"err_name_list [图片名, 原始标签, 错判标签]:\n"
+            err_list = ""
+            for i in self.err_name_list:
+                name = i[0].split("\\")
+                name = name[-2]+"/"+name[-1]
+                err_list += f"path: {name}    {i[1]}    {i[2]}\n"
+
+            f.write(info + err_list + "\n")
+
+
+def train_one_epoch(model, optimizer, data_loader, device, epoch, info_path):
     model.train()
+    estimator = Estimate(4)
+
     loss_function = torch.nn.CrossEntropyLoss()
     accu_loss = torch.zeros(1).to(device)  # 累计损失
     accu_num = torch.zeros(1).to(device)   # 累计预测正确的样本数
@@ -121,12 +168,14 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch):
     sample_num = 0
     data_loader = tqdm(data_loader, file=sys.stdout)
     for step, data in enumerate(data_loader):
-        images, labels = data
+        images, labels, names = data
         sample_num += images.shape[0]
 
         pred = model(images.to(device))
         pred_classes = torch.max(pred, dim=1)[1]
         accu_num += torch.eq(pred_classes, labels.to(device)).sum()
+
+        estimator.add(pred_classes.cpu().numpy().tolist(), labels.cpu().numpy().tolist(), names)
 
         loss = loss_function(pred, labels.to(device))
         loss.backward()
@@ -143,14 +192,18 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch):
         optimizer.step()
         optimizer.zero_grad()
 
+    estimator.cal()
+    estimator.save(epoch, info_path)
+
     return accu_loss.item() / (step + 1), accu_num.item() / sample_num
 
 
 @torch.no_grad()
-def evaluate(model, data_loader, device, epoch):
+def evaluate(model, data_loader, device, epoch, info_path):
     loss_function = torch.nn.CrossEntropyLoss()
 
     model.eval()
+    estimator = Estimate(4)
 
     accu_num = torch.zeros(1).to(device)   # 累计预测正确的样本数
     accu_loss = torch.zeros(1).to(device)  # 累计损失
@@ -158,12 +211,14 @@ def evaluate(model, data_loader, device, epoch):
     sample_num = 0
     data_loader = tqdm(data_loader, file=sys.stdout)
     for step, data in enumerate(data_loader):
-        images, labels = data
+        images, labels, names = data
         sample_num += images.shape[0]
 
         pred = model(images.to(device))
         pred_classes = torch.max(pred, dim=1)[1]
         accu_num += torch.eq(pred_classes, labels.to(device)).sum()
+
+        estimator.add(pred_classes.cpu().numpy().tolist(), labels.cpu().numpy().tolist(), names)
 
         loss = loss_function(pred, labels.to(device))
         accu_loss += loss
@@ -171,5 +226,8 @@ def evaluate(model, data_loader, device, epoch):
         data_loader.desc = "[valid epoch {}] loss: {:.3f}, acc: {:.3f}".format(epoch,
                                                                                accu_loss.item() / (step + 1),
                                                                                accu_num.item() / sample_num)
+
+    estimator.cal()
+    estimator.save(epoch, info_path, is_train=False)
 
     return accu_loss.item() / (step + 1), accu_num.item() / sample_num

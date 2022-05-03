@@ -1,7 +1,7 @@
 import os
 import math
 import argparse
-
+import datetime
 import torch
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
@@ -56,14 +56,14 @@ def main(args):
                                                batch_size=batch_size,
                                                shuffle=True,
                                                pin_memory=True,
-                                               num_workers=nw,
+                                               num_workers=0,
                                                collate_fn=train_dataset.collate_fn)
 
     val_loader = torch.utils.data.DataLoader(val_dataset,
                                              batch_size=batch_size,
                                              shuffle=False,
                                              pin_memory=True,
-                                             num_workers=nw,
+                                             num_workers=0,
                                              collate_fn=val_dataset.collate_fn)
 
     # 如果存在预训练权重则载入
@@ -94,13 +94,18 @@ def main(args):
 
     best_val_acc = 0
 
+    if not os.path.exists("./estimate_info"):
+        os.mkdir("./estimate_info")
+    results_file = "./estimate_info/info-{}.txt".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+
     for epoch in range(args.epochs):
         # train
         train_loss, train_acc = train_one_epoch(model=model,
                                                 optimizer=optimizer,
                                                 data_loader=train_loader,
                                                 device=device,
-                                                epoch=epoch)
+                                                epoch=epoch,
+                                                info_path=results_file)
 
         scheduler.step()
 
@@ -108,7 +113,8 @@ def main(args):
         val_loss, val_acc = evaluate(model=model,
                                      data_loader=val_loader,
                                      device=device,
-                                     epoch=epoch)
+                                     epoch=epoch,
+                                     info_path=results_file)
 
         tags = ["train_loss", "train_acc", "val_loss", "val_acc", "learning_rate"]
         tb_writer.add_scalar(tags[0], train_loss, epoch)
@@ -132,12 +138,10 @@ if __name__ == '__main__':
     parser.add_argument('--lrf', type=float, default=0.01)
 
     # 数据集所在根目录
-    parser.add_argument('--data-path', type=str,
-                        default="E:/git repositories/Fundus-Imaging-Diagnosis/datasets_for_efficientnetV2")
+    parser.add_argument('--data-path', type=str, default="E:/git repositories/Fundus-Imaging-Diagnosis/datasets_for_efficientnetV2")
 
     # load model weights
-    parser.add_argument('--weights', type=str, default='./best_acc.pth',
-                        help='initial weights path')
+    parser.add_argument('--weights', type=str, default='./best_acc.pth', help='initial weights path')
     parser.add_argument('--freeze-layers', type=bool, default=True)
     parser.add_argument('--device', default='cuda:0', help='device id (i.e. 0 or 0,1 or cpu)')
 
