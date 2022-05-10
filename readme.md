@@ -90,7 +90,13 @@ U-Net诞生的一个主要前提是，很多时候深度学习的结构需要大
 
 ### 训练流程
 
-[数据集](https://drive.google.com/drive/folders/16Usia2gUBUzLglrNI2edM5iJaclvrZrj?usp=sharing)
+#### 数据准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/16Usia2gUBUzLglrNI2edM5iJaclvrZrj?usp=sharing)）
+
+
+
+#### 模型训练：
+
+
 
 ### 实验和结果分析
 
@@ -102,13 +108,19 @@ U-Net诞生的一个主要前提是，很多时候深度学习的结构需要大
 
 ### 模型简述
 
-这一任务在许多深度学习的比赛中都曾出现，我们在查阅资料时发现，大多数效果较好的模型都是采用了efficient net，也有一部分是结合了res net、inception、mobile net做集成学习，但是后者的训练代价是很大的，而且效果也没有特别明显的突破。所以我们最终还是决定选用efficient net v2来做这个分类任务。
+这一任务在许多深度学习的比赛中都曾出现，我们在查阅资料时发现，大多数效果较好的模型都是采用了Efficient Net，也有一部分是结合了Res-Net、Inception、Mobile Net做集成学习，但是后者的训练代价是很大的，而且效果也没有特别明显的突破。所以我们最终还是决定选用efficient net v2来做这个分类任务。
 
-efficient net可以说是
+Efficient Net的作者通过调整网络的宽度、深度以及输入网络的分辨率来提升网络的性能，最终得到了一系列适用于不同分表率的模型。但是第一代Efficient Net在训练时却很耗费显存并且收敛速度也没有达到理想值，因此作者对第一代的网络做了一些改动，使用Fused-MBConv替换掉了浅层的MBConv，并且设计了渐进式的学习策略来减少训练时间。
 
 ### 训练流程
 
-[数据集](https://drive.google.com/drive/folders/1T54Cn1Y98KO_SauicJ22tQQ20ZGFlTK3?usp=sharing)
+#### 数据准备：（[这里是处理好的数据集](https://drive.google.com/drive/folders/1T54Cn1Y98KO_SauicJ22tQQ20ZGFlTK3?usp=sharing)）
+
+
+
+#### 模型训练：
+
+
 
 ### 实验和结果分析
 
