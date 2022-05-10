@@ -12,11 +12,24 @@
 
 ![20210429093338824](./doc/20210429093338824.png)
 
-YOLOv5在三代和四代的基础上做出了一些调整。在输入端除了保留Mosaic数据增强方法、它还增加了自适应锚框计算、自适应图片缩放等功能。backbone方面，v5在输入端后的降采样方式更新为Focus模块并且调整了CSP的内部结构。在neck层级中保留了v4的融合多尺度特征图的方式。
+YOLOv5在第三代和第四代的基础上做出了一些调整。在输入端除了保留Mosaic数据增强方法、它还增加了自适应锚框计算、自适应图片缩放等功能。backbone方面，v5在输入端后的降采样方式更新为Focus模块并且调整了CSP的内部结构。在neck层级中保留了v4的融合多尺度特征图的方式。
 
 ### 训练流程
 
 #### 关于数据集的准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/1KVLMk71KkgyeYAE99oK1pT_zcdwYFJjD?usp=sharing)）
+
+我们拿到手的任务数据集内容是八十张眼底图像和对应的中心框标签数据。
+
+```html
+中心凹检测
+|---train（图片）
+|---train_location（标签）
+|---fovea_localization_train_GT.csv（框中心坐标）
+```
+
+为了将数据转换成YOLO对应的格式，我们参考了YOLOv5项目内提供的方法：在 [Roboflow](https://roboflow.com/?ref=ultralytics) 网站上传图片和相应的标签文件即可生成YOLO可用的数据集，并且还可以选择进行图像预处理和数据增强。
+
+#### 关于模型训练：
 
 
 
