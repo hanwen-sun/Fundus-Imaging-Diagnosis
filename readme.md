@@ -18,7 +18,7 @@ YOLOv5在第三代和第四代的基础上做出了一些调整。在输入端�
 
 #### 数据准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/1KVLMk71KkgyeYAE99oK1pT_zcdwYFJjD?usp=sharing)）
 
-我们拿到手的任务数据集内容是八十张眼底图像和对应的边界框标签数据。
+我们拿到手的原始数据集内容是八十张眼底图像和对应的边界框标签数据。
 
 ```html
 中心凹检测
@@ -57,9 +57,9 @@ yolov5_for_detection
 |---yolov5m.pt
 ```
 
-首先复制一份yolov5m.yaml的模型描述文件，重命名为fovea.yaml。进入文件后修改分类数即可（想修改anchor尺寸也可以，但是对效果提升没什么帮助）。如果是编译器中运行那么要在train文件修改参数，或者也可以直接命令行运行下面的指令。
+首先复制一份yolov5m.yaml的模型描述文件，重命名为 fovea.yaml 。进入文件后修改分类数即可（想修改anchor尺寸也可以，但是对效果提升没什么帮助）。如果是编译器中运行那么要在train文件修改参数，或者也可以直接命令行运行下面的指令。
 
-模型运行时所保存的数据和权重都在runs文件夹下，也可以通过tensorboard实时查看可视化的训练过程。
+模型运行时所保存的数据和权重都在runs文件夹下，也可以通过tensor board实时查看可视化的训练过程。
 
 ```cmd
 python train.py --data datasets_for_yolov5/fovea_data.yaml --cfg models/fovea.yaml --weights yolov5m.pt --epochs 100 --batch-size 16
@@ -92,11 +92,42 @@ U-Net诞生的一个主要前提是，很多时候深度学习的结构需要大
 
 #### 数据准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/16Usia2gUBUzLglrNI2edM5iJaclvrZrj?usp=sharing)）
 
+在此任务中，我们的原始数据集是二十份眼底图像和对应的血管分割二值化图像。
 
+```html
+血管分割
+|---images（tif格式的眼底图片）
+|---1st_manual（gif格式的二值化血管分割图）
+```
+
+| <img src="doc/21_training.jpg" style="zoom:50%;" /> | <img src="doc/21_manual1.gif" style="zoom:50%;" /> | <img src="doc/21_training.gif" style="zoom:50%;" /> |
+| :-------------------------------------------------: | :------------------------------------------------: | :-------------------------------------------------: |
+
+这里为了排除眼底图像中黑色边框的干扰，要先生成一个mask，这里将项目和数据文件按照如下路径设置并运行`create_mask.py`即可。
+
+```
+本地项目的文件目录部分内容如下（下载的处理好的数据集要放在此文件夹中）：
+U-net_for_segmentation
+|---src
+|---train_utils
+|---save_weights
+|---datasets_for_U-net
+    |---training
+        |---1st_manual
+        |---images
+        |---mask
+|---train.py
+|---predict.py
+|---create_mask.py
+```
 
 #### 模型训练：
 
+由于这个模型比较小且任务范围有限，因此没有设置载入与训练权重的方法。只需在参数列表设置好数据集的位置，或者是在命令行传入路径即可进行训练。
 
+模型的权重保存在`save_weights`文件夹中，若要用训练好的模型进行预测，需要在`predict.py`中修改相应的路径即可进行分割。
+
+在训练时，模型会对输入图像进行一些翻转和随机裁剪的处理来防止过拟合。
 
 ### 实验和结果分析
 
