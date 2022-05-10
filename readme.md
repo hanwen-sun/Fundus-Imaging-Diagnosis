@@ -47,7 +47,7 @@ pip install -r requirements.txt  # install
 本地项目的文件目录部分内容如下（下载的处理好的数据集要放在此文件夹中）：
 yolov5_for_detection
 |---models
-    |---yolov5m.yaml
+	|---yolov5m.yaml
 |---data
 |---datasets_for_yolov5
 	|---fovea_data.yaml
