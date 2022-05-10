@@ -47,23 +47,22 @@ pip install -r requirements.txt  # install
 本地项目的文件目录部分内容如下（下载的处理好的数据集要放在此文件夹中）：
 yolov5_for_detection
 |---models
-	|---yolov5m.yaml
+    |---yolov5m.yaml
 |---data
 |---datasets_for_yolov5
-	|---fovea_data.yaml
+    |---fovea_data.yaml
 |---runs
 |---train.py
 |---detect.py
 |---yolov5m.pt
 ```
 
-首先复制一份yolov5m.yaml的模型描述文件，重命名为fovea.yaml。进入文件后修改分类数即可（想修改anchor尺寸也可以，但是对效果提升没什么帮助）。如果是编译器中运行那么要在train文件修改参数，或者也可以直接命令行运行下面的指令。
+首先复制一份yolov5m.yaml的模型描述文件，重命名为fovea.yaml。进入文件后修改分类数即可（想修改anchor尺寸也可以，但是对效果提升没什么帮助）。如果是编译器中运行那么要在train文件修改参数，或者也可以直接命令行运行下面的指令。模型运行时所保存的数据和权重都在runs文件夹下，也可以通过tensorboard实时查看可视化的训练过程。
 
 ```cmd
 python train.py --data datasets/fovea_data.yaml --cfg models/fovea.yaml --weights yolov5m.pt --epochs 100 --batch-size 16
+TensorBoard: Start with 'tensorboard --logdir runs\train', view at http://localhost:6006/
 ```
-
-
 
 ### 实验和结果分析
 
