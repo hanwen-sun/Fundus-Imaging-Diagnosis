@@ -68,7 +68,7 @@ TensorBoard: Start with 'tensorboard --logdir runs\train', view at http://localh
 
 ### 实验和结果分析
 
-
+#对比一下做和不做数据扩充在收敛速度上的区别
 
 ------
 
@@ -135,7 +135,7 @@ python train.py --data-path datasets_for_U-net --epochs 30 --batch-size 4
 
 ### 实验和结果分析
 
-
+#这个没啥说的 就结合结果的dice分析一下吧
 
 ------
 
@@ -215,7 +215,7 @@ path: 3/20051020_44598_0100_PP.png    3    2
 
 ### 实验和结果分析
 
-
+#这个对比一下数据增强前后 还有冻结权重
 
 ------
 
