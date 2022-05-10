@@ -16,7 +16,7 @@ YOLOv5在第三代和第四代的基础上做出了一些调整。在输入端�
 
 ### 训练流程
 
-#### 数据准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/1KVLMk71KkgyeYAE99oK1pT_zcdwYFJjD?usp=sharing)）
+#### 数据准备：（[用处理好的数据集可以直接进行模型训练](https://drive.google.com/drive/folders/1KVLMk71KkgyeYAE99oK1pT_zcdwYFJjD?usp=sharing)）
 
 我们拿到手的原始数据集内容是八十张眼底图像和对应的边界框标签数据。
 
@@ -90,7 +90,7 @@ U-Net诞生的一个主要前提是，很多时候深度学习的结构需要大
 
 ### 训练流程
 
-#### 数据准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/16Usia2gUBUzLglrNI2edM5iJaclvrZrj?usp=sharing)）
+#### 数据准备：（[用处理好的数据集可以直接进行模型训练](https://drive.google.com/drive/folders/16Usia2gUBUzLglrNI2edM5iJaclvrZrj?usp=sharing)）
 
 在此任务中，我们的原始数据集是二十份眼底图像和对应的血管分割二值化图像。
 
@@ -123,7 +123,7 @@ U-net_for_segmentation
 
 #### 模型训练：
 
-由于这个模型比较小且任务范围有限，因此没有设置载入与训练权重的方法。只需在参数列表设置好数据集的位置，或者是在命令行传入路径即可进行训练。
+由于这个模型比较小且任务范围有限，因此没有设置载入与训练权重的方法。只需根据上面的文件目录设置好文件位置并在参数列表修改对应路径，或者是在命令行传入路径即可进行训练。
 
 模型的权重保存在`save_weights`文件夹中，若要用训练好的模型进行预测，需要在`predict.py`中修改相应的路径即可进行分割。
 
@@ -145,7 +145,7 @@ Efficient Net的作者通过调整网络的宽度、深度以及输入网络的�
 
 ### 训练流程
 
-#### 数据准备：（[这里是处理好的数据集](https://drive.google.com/drive/folders/1T54Cn1Y98KO_SauicJ22tQQ20ZGFlTK3?usp=sharing)）
+#### 数据准备：（[用处理好的数据集可以直接进行模型训练](https://drive.google.com/drive/folders/1T54Cn1Y98KO_SauicJ22tQQ20ZGFlTK3?usp=sharing)）
 
 
 
