@@ -16,9 +16,9 @@ YOLOv5在第三代和第四代的基础上做出了一些调整。在输入端�
 
 ### 训练流程
 
-#### 关于数据集的准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/1KVLMk71KkgyeYAE99oK1pT_zcdwYFJjD?usp=sharing)）
+#### 数据准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/1KVLMk71KkgyeYAE99oK1pT_zcdwYFJjD?usp=sharing)）
 
-我们拿到手的任务数据集内容是八十张眼底图像和对应的中心框标签数据。
+我们拿到手的任务数据集内容是八十张眼底图像和对应的边界框标签数据。
 
 ```html
 中心凹检测
@@ -27,9 +27,41 @@ YOLOv5在第三代和第四代的基础上做出了一些调整。在输入端�
 |---fovea_localization_train_GT.csv（框中心坐标）
 ```
 
-为了将数据转换成YOLO对应的格式，我们参考了YOLOv5项目内提供的方法：在 [Roboflow](https://roboflow.com/?ref=ultralytics) 网站上传图片和相应的标签文件即可生成YOLO可用的数据集，并且还可以选择进行图像预处理和数据增强。
+为了将数据转换成YOLO对应的格式，我们参考了YOLOv5项目内提供的方法：在 [Roboflow](https://roboflow.com/?ref=ultralytics) 网站上传图片和相应的标签文件即可生成YOLO可用的数据集，并且还可以选择进行图像预处理和数据增强。除了自定义的数据集，YOLOv5还有五种规模的网络和预训练权重可供选择，我们选用的是YOLOv5m。
 
-#### 关于模型训练：
+#### 模型训练：
+
+首先要把项目克隆到本地，然后配置相应环境。这里我们选择在本地跑通调试好再上传到服务器进行训练，如果设备中已经有部分所需的环境（pytorch，torch vision等）则最好根据需求列表手动安装，否则可能会产生一些版本覆盖情况发生，最终导致相关的库之间版本不匹配。
+
+在服务器端则可以直接运行下述命令行指令：
+
+```cmd
+git clone https://github.com/ultralytics/yolov5  # clone
+cd yolov5
+pip install -r requirements.txt  # install
+```
+
+配置好环境后要进行相关路径设置，为了不改动源项目我们在这的操作都是先复制副本再在副本上进行修改。
+
+```
+本地项目的文件目录部分内容如下（下载的处理好的数据集要放在此文件夹中）：
+yolov5_for_detection
+|---models
+    |---yolov5m.yaml
+|---data
+|---datasets_for_yolov5
+	|---fovea_data.yaml
+|---runs
+|---train.py
+|---detect.py
+|---yolov5m.pt
+```
+
+首先复制一份yolov5m.yaml的模型描述文件，重命名为fovea.yaml。进入文件后修改分类数即可（想修改anchor尺寸也可以，但是对效果提升没什么帮助）。如果是编译器中运行那么要在train文件修改参数，或者也可以直接命令行运行下面的指令。
+
+```cmd
+python train.py --data datasets/fovea_data.yaml --cfg models/fovea.yaml --weights yolov5m.pt --epochs 100 --batch-size 16
+```
 
 
 
