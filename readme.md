@@ -16,7 +16,7 @@ YOLOv5在三代和四代的基础上做出了一些调整。在输入端除了�
 
 ### 训练流程
 
-#### 关于数据集的准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/1T54Cn1Y98KO_SauicJ22tQQ20ZGFlTK3?usp=sharing)）
+#### 关于数据集的准备：（[这是处理好的数据集](https://drive.google.com/drive/folders/1KVLMk71KkgyeYAE99oK1pT_zcdwYFJjD?usp=sharing)）
 
 
 
