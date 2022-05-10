@@ -74,7 +74,31 @@ TensorBoard: Start with 'tensorboard --logdir runs\train', view at http://localh
 
 ### 模型简述
 
+这是一个二值的语义分割任务，数据集只有二十份眼底照片和对应的血管分割标签。鉴于这样的项目特性，我们在这一任务中选择了U-net网络。
 
+U-Net诞生的一个主要前提是，很多时候深度学习的结构需要大量的sample和计算资源，但是U-Net基于FCN（全卷积神经网络）进行改进，并且利用数据增强（data augmentation）可以对一些比较少样本的数据进行训练，特别是医学方面相关的数据（医学数据比一般我们所看到的图片及其他文本数据的获取成本更大，不论是时间还是资源的消耗），所以U-Net的出现对于深度学习用于较少样本的医学影像是很有帮助的。
+
+![](doc/68747470733a2f2f692e696d6775722e636f6d2f6a6544567071462e706e67.png)
+
+整个神经网络主要有两部分组成：收缩路径（contracting path）和扩展路径（expanding path）
+
+收缩路径（contracting path）是一个常规的卷积网络，它包含重复的2个3x3卷积，紧接着是一个RELU，一个max pooling（步长为2），用来降采样，每次降采样我们都将feature channel扩大一倍，从64、128、256、512、1024。两个3x3的卷积核之后跟一个2x2的最大化池化层，缩小图片的分辨率。
+
+（2）扩展路径（expanding path）包含一个上采样（2x2上卷积），将图像大小扩大一倍，然后再使用普通的3x3卷积核，再将通道数feature channel缩小一倍，从1024、512、256、128、64。
+
+（3）裁剪crop并且跨层连接
+
+上面的结构其实如果是水平方向展开，就是一个“编码-解码”的这样一个结构，但是有两个地方是需要注意的：
+
+第一：编码解码的feature map大小是不对称的；
+
+第二：我需要使用跨层连接来提高特征的利用率，在上采样的时候利用前面低层的特征信息；
+
+鉴于这两个点，U-Net依然沿袭了FCN网络的处理方式——进行特征融合，但是与FCN不同的是，融合的方式有所差别，
+
+第一：由于特征图feature map不对称，所以要能够融合需要将收缩路径中的feature map进行裁剪crop，大小一样了才能融合；
+
+第二：特征融合方式是“拼接“”，U-net采用将特征在channel维度拼接在一起，形成更厚的channel。而FCN融合时使用的对应点相加，并不形成更厚的特征。一个是concat，一个是add。
 
 ### 训练流程
 
@@ -101,5 +125,5 @@ TensorBoard: Start with 'tensorboard --logdir runs\train', view at http://localh
 ### 参考项目：
 
 - https://github.com/ultralytics/yolov5.git
-
+- https://github.com/milesial/Pytorch-UNet.git
 - https://github.com/WZMIAOMIAO/deep-learning-for-image-processing.git
