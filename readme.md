@@ -10,7 +10,7 @@
 
 ​		另外一点原因则是由于项目本身的特性。我们观察原始数据集后不难看出，每幅图像只有一个检测目标，并且标定框的尺寸相对于整幅图片来说也不是很小，因此即使是使用单阶段检测方法也能获得不错的效果，此外我们也考虑过使用基于注意力机制的端到端检测方法，但是由于标定数据集较少我们最终还是决定使用YOLOv5进行训练。
 
-![](E:\git repositories\Fundus-Imaging-Diagnosis\20210429093338824.png)
+![]([Fundus-Imaging-Diagnosis/20210429093338824.png at main · polarispw/Fundus-Imaging-Diagnosis (github.com)](https://github.com/polarispw/Fundus-Imaging-Diagnosis/blob/main/doc/20210429093338824.png))
 
 ​		YOLOv5在三代和四代的基础上做出了一些调整。在输入端除了保留Mosaic数据增强方法、它还增加了自适应锚框计算、自适应图片缩放等功能。backbone方面，v5在输入端后的降采样方式更新为Focus模块并且调整了CSP的内部结构。在neck层级中保留了v4的融合多尺度特征图的方式。
 
